@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Redirecting...</title>
+</head>
+<body>
+  <script>
+    const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    window.location.href = isMobile ? 'mobile.html' : 'desktop.html';
+  </script>
+</body>
+</html>

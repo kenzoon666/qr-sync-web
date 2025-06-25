@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>QR Notes — Desktop</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+  <h1>QR Notes — Desktop</h1>
+  <p>Сканируй этот QR-код телефоном:</p>
+  <div id="qrcode"></div>
+
+  <script>
+    const backendURL = 'https://qr-sync-server.onrender.com'; // Твой сервер
+    fetch(`${backendURL}/session`)
+      .then(res => res.json())
+      .then(({ sessionId }) => {
+        const qrUrl = `${window.location.origin}/mobile.html?sessionId=${sessionId}`;
+        QRCode.toCanvas(document.getElementById('qrcode'), qrUrl);
+
+        const ws = new WebSocket(backendURL.replace('http', 'ws'));
+        ws.onopen = () => ws.send(JSON.stringify({ type: 'join', sessionId }));
+        ws.onmessage = msg => {
+          const data = JSON.parse(msg.data);
+          if (data.type === 'update') console.log('Text from mobile:', data.text);
+        };
+      });
+  </script>
+</body>
+</html>
